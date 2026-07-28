@@ -1,0 +1,20 @@
+[project]
+id = "siecs"
+name = "Siecs"
+language = "C"
+version = "3295244"
+url = "https://github.com/suleymanlaarabi/siecs"
+enabled = true
+
+[build]
+cwd = "{root}"
+commands = [
+  ["bake", "build", "{root}/../siecs", "-r", "--cfg", "release"],
+  ["cmake", "-S", "adapters/siecs", "-B", "build/siecs", "-G", "Ninja", "-DCMAKE_BUILD_TYPE=Release", "-DSIECS_ROOT={root}/../siecs"],
+  ["cmake", "--build", "build/siecs", "--config", "Release"],
+]
+
+[run]
+binary = "build/siecs/siecs-bench"
+command = ["{binary}"]
+workloads = ["entity_cycle", "add_remove", "iterate"]

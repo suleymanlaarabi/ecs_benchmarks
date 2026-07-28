@@ -1,0 +1,40 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="920" height="500" viewBox="0 0 920 500">
+<style>text{font-family:ui-sans-serif,system-ui,sans-serif;fill:#293241}.title{font-size:20px;font-weight:700}.axis{font-size:12px}.legend{font-size:13px}.grid{stroke:#dfe5ec;stroke-width:1}.bar{shape-rendering:crispEdges}</style>
+<rect width="100%" height="100%" fill="#ffffff"/>
+<text class="title" x="88" y="31">Cached query iteration</text>
+<text class="axis" x="88" y="50">median ms / operation — logarithmic scale</text>
+<line class="grid" x1="88" y1="416.00" x2="896" y2="416.00"/>
+<text class="axis" text-anchor="end" x="79" y="420.00">0.0001</text>
+<line class="grid" x1="88" y1="328.00" x2="896" y2="328.00"/>
+<text class="axis" text-anchor="end" x="79" y="332.00">0.001</text>
+<line class="grid" x1="88" y1="240.00" x2="896" y2="240.00"/>
+<text class="axis" text-anchor="end" x="79" y="244.00">0.01</text>
+<line class="grid" x1="88" y1="152.00" x2="896" y2="152.00"/>
+<text class="axis" text-anchor="end" x="79" y="156.00">0.1</text>
+<line class="grid" x1="88" y1="64.00" x2="896" y2="64.00"/>
+<text class="axis" text-anchor="end" x="79" y="68.00">1</text>
+<rect class="bar" x="131.67" y="306.38" width="44.00" height="109.62" fill="#e76f51"><title>bevy: 0.001761 ms</title></rect>
+<rect class="bar" x="177.67" y="338.21" width="44.00" height="77.79" fill="#2a9d8f"><title>flecs: 0.0007655 ms</title></rect>
+<rect class="bar" x="223.67" y="320.26" width="44.00" height="95.74" fill="#457b9d"><title>gaia: 0.001224 ms</title></rect>
+<rect class="bar" x="269.67" y="346.11" width="44.00" height="69.89" fill="#f4a261"><title>siecs: 0.0006226 ms</title></rect>
+<text class="axis" text-anchor="middle" x="222.67" y="439">1,000</text>
+<rect class="bar" x="401.00" y="207.48" width="44.00" height="208.52" fill="#e76f51"><title>bevy: 0.02342 ms</title></rect>
+<rect class="bar" x="447.00" y="249.64" width="44.00" height="166.36" fill="#2a9d8f"><title>flecs: 0.00777 ms</title></rect>
+<rect class="bar" x="493.00" y="238.40" width="44.00" height="177.60" fill="#457b9d"><title>gaia: 0.01043 ms</title></rect>
+<rect class="bar" x="539.00" y="247.27" width="44.00" height="168.73" fill="#f4a261"><title>siecs: 0.008268 ms</title></rect>
+<text class="axis" text-anchor="middle" x="492.00" y="439">10,000</text>
+<rect class="bar" x="670.33" y="112.32" width="44.00" height="303.68" fill="#e76f51"><title>bevy: 0.2825 ms</title></rect>
+<rect class="bar" x="716.33" y="130.85" width="44.00" height="285.15" fill="#2a9d8f"><title>flecs: 0.1739 ms</title></rect>
+<rect class="bar" x="762.33" y="103.79" width="44.00" height="312.21" fill="#457b9d"><title>gaia: 0.3531 ms</title></rect>
+<rect class="bar" x="808.33" y="145.53" width="44.00" height="270.47" fill="#f4a261"><title>siecs: 0.1185 ms</title></rect>
+<text class="axis" text-anchor="middle" x="761.33" y="439">100,000</text>
+<text class="axis" text-anchor="middle" x="492.0" y="483">entities</text>
+<rect x="88" y="452" width="13" height="13" rx="2" fill="#e76f51"/>
+<text class="legend" x="107" y="463">bevy</text>
+<rect x="154" y="452" width="13" height="13" rx="2" fill="#2a9d8f"/>
+<text class="legend" x="173" y="463">flecs</text>
+<rect x="229" y="452" width="13" height="13" rx="2" fill="#457b9d"/>
+<text class="legend" x="248" y="463">gaia</text>
+<rect x="295" y="452" width="13" height="13" rx="2" fill="#f4a261"/>
+<text class="legend" x="314" y="463">siecs</text>
+</svg>

@@ -1,0 +1,31 @@
+schema_version = 1
+
+[suite]
+name = "Archetype ECS benchmark"
+samples = 10
+warmup = 2
+entities = [1_000, 10_000, 100_000]
+quick_samples = 3
+quick_warmup = 1
+quick_entities = [1_000, 10_000]
+
+[[workloads]]
+id = "entity_cycle"
+name = "Create + destroy"
+description = "Create N entities with Position one by one, then destroy them one by one."
+iterations = 5
+quick_iterations = 2
+
+[[workloads]]
+id = "add_remove"
+name = "Add + remove component"
+description = "Add Velocity to N Position entities, then remove Velocity, forcing two archetype migrations."
+iterations = 10
+quick_iterations = 3
+
+[[workloads]]
+id = "iterate"
+name = "Cached query iteration"
+description = "Run a cached mutable Position + immutable Velocity query over N entities."
+iterations = 100
+quick_iterations = 20

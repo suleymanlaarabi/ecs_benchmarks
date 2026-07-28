@@ -1,0 +1,6 @@
+build/
+adapters/bevy/target/
+results/runs/
+__pycache__/
+*.pyc
+.DS_Store

@@ -1,0 +1,16 @@
+[project]
+id = "bevy"
+name = "Bevy ECS"
+language = "Rust"
+version = "0.19.0"
+url = "https://github.com/bevyengine/bevy"
+enabled = true
+
+[build]
+cwd = "{project_dir}"
+commands = [["cargo", "build", "--release"]]
+
+[run]
+binary = "adapters/bevy/target/release/bevy-bench"
+command = ["{binary}"]
+workloads = ["entity_cycle", "add_remove", "iterate"]

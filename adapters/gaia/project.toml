@@ -1,0 +1,19 @@
+[project]
+id = "gaia"
+name = "Gaia-ECS"
+language = "C++"
+version = "09eaa807"
+url = "https://github.com/richardbiely/gaia-ecs"
+enabled = true
+
+[build]
+cwd = "{root}"
+commands = [
+  ["cmake", "-S", "adapters/gaia", "-B", "build/gaia", "-G", "Ninja", "-DCMAKE_BUILD_TYPE=Release"],
+  ["cmake", "--build", "build/gaia", "--config", "Release"],
+]
+
+[run]
+binary = "build/gaia/gaia-bench"
+command = ["{binary}"]
+workloads = ["entity_cycle", "add_remove", "iterate"]
