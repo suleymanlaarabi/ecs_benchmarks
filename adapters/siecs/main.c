@@ -1,5 +1,9 @@
 #include <siecs.h>
 
+#if SIECS_HAS_NAMES || SIECS_HAS_META || SIECS_HAS_REST
+#error "Siecs benchmark must be built without optional features"
+#endif
+
 #include <inttypes.h>
 #include <stdio.h>
 #include <stdlib.h>

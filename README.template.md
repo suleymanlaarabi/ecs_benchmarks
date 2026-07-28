@@ -11,10 +11,11 @@ aggregates the samples, generates SVG charts, and updates this README.
 
 ## Run everything
 
-Requirements: Git, Python 3.11+, CMake 3.20+, Ninja, Bake, a C/C++23 compiler,
-Rust, and the Siecs checkout at `../siecs`. External dependencies are pinned
-and downloaded by Cargo/CMake on the first run; Siecs is built from that local
-checkout.
+Requirements: Git, Python 3.11+, CMake 3.20+, Ninja, Bake, and a C/C++23
+compiler. Rust is required by the Bevy adapter. If present, Siecs is taken from
+the local checkout at `../siecs`; otherwise it is cloned at the pinned commit
+into the build cache. External dependencies are pinned and downloaded on the
+first run.
 
 ```console
 ./bench
@@ -93,7 +94,9 @@ Adapter-specific build choices matter when interpreting the results:
 - Flecs uses a custom core-only build. Feature addons are disabled; only
   `FLECS_OS_API_IMPL`, its platform and allocator backend, remains. The
   executable verifies this and release mode at startup.
-- Siecs is built in release mode from the local repository at `../siecs`.
+- Siecs uses its official `distr/siecs_no_addons.c/.h` amalgamation in release
+  mode. Names, metadata, and REST are disabled in that distribution. A local
+  `../siecs` checkout is preferred, with a pinned clone used as fallback.
 
 ## Repository layout
 

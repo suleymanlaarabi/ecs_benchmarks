@@ -11,10 +11,11 @@ aggregates the samples, generates SVG charts, and updates this README.
 
 ## Run everything
 
-Requirements: Git, Python 3.11+, CMake 3.20+, Ninja, Bake, a C/C++23 compiler,
-Rust, and the Siecs checkout at `../siecs`. External dependencies are pinned
-and downloaded by Cargo/CMake on the first run; Siecs is built from that local
-checkout.
+Requirements: Git, Python 3.11+, CMake 3.20+, Ninja, Bake, and a C/C++23
+compiler. Rust is required by the Bevy adapter. If present, Siecs is taken from
+the local checkout at `../siecs`; otherwise it is cloned at the pinned commit
+into the build cache. External dependencies are pinned and downloaded on the
+first run.
 
 ```console
 ./bench
@@ -63,7 +64,7 @@ results.
 
 ## Latest results
 
-Generated `2026-07-28T11:43:57.121642+00:00` on **Intel(R) Core(TM) Ultra 9 185H** (22 logical CPUs, `Linux-7.1.2-1-cachyos-bore-lto-x86_64-with-glibc2.43`).
+Generated `2026-07-28T14:13:58.195001+00:00` on **Intel(R) Core(TM) Ultra 9 185H** (22 logical CPUs, `Linux-7.1.2-1-cachyos-bore-lto-x86_64-with-glibc2.43`).
 
 Profile: **full suite** with 10 samples and 2 warmup iteration(s).
 
@@ -73,15 +74,15 @@ Values are median milliseconds per operation; lower is better. Setup is excluded
 
 | Workload | Entities | bevy 0.19.0 | flecs 4.1.5 | gaia 09eaa807 | siecs 3295244 |
 |---|---:|---:|---:|---:|---:|
-| Create + destroy | 1,000 | 0.084 | 0.479 | 0.516 | 0.098 |
-| Create + destroy | 10,000 | 0.916 | 2.659 | 6.290 | 1.318 |
-| Create + destroy | 100,000 | 10.630 | 26.233 | 54.948 | 8.244 |
-| Add + remove component | 1,000 | 0.115 | 0.169 | 0.277 | 0.062 |
-| Add + remove component | 10,000 | 1.520 | 1.859 | 3.297 | 0.800 |
-| Add + remove component | 100,000 | 13.720 | 18.066 | 44.142 | 6.947 |
-| Cached query iteration | 1,000 | 0.002 | 0.001 | 0.001 | 0.001 |
-| Cached query iteration | 10,000 | 0.023 | 0.008 | 0.010 | 0.008 |
-| Cached query iteration | 100,000 | 0.282 | 0.174 | 0.353 | 0.118 |
+| Create + destroy | 1,000 | 0.063 | 0.149 | 0.205 | 0.030 |
+| Create + destroy | 10,000 | 0.539 | 1.238 | 2.418 | 0.214 |
+| Create + destroy | 100,000 | 4.566 | 12.819 | 24.533 | 2.210 |
+| Add + remove component | 1,000 | 0.061 | 0.108 | 0.134 | 0.041 |
+| Add + remove component | 10,000 | 0.674 | 0.861 | 1.389 | 0.288 |
+| Add + remove component | 100,000 | 6.794 | 8.967 | 16.004 | 3.071 |
+| Cached query iteration | 1,000 | 0.002 | 0.001 | 0.001 | 0.000 |
+| Cached query iteration | 10,000 | 0.010 | 0.003 | 0.004 | 0.003 |
+| Cached query iteration | 100,000 | 0.121 | 0.049 | 0.053 | 0.062 |
 
 ![Create + destroy](results/latest/entity_cycle.svg)
 
@@ -123,7 +124,9 @@ Adapter-specific build choices matter when interpreting the results:
 - Flecs uses a custom core-only build. Feature addons are disabled; only
   `FLECS_OS_API_IMPL`, its platform and allocator backend, remains. The
   executable verifies this and release mode at startup.
-- Siecs is built in release mode from the local repository at `../siecs`.
+- Siecs uses its official `distr/siecs_no_addons.c/.h` amalgamation in release
+  mode. Names, metadata, and REST are disabled in that distribution. A local
+  `../siecs` checkout is preferred, with a pinned clone used as fallback.
 
 ## Repository layout
 

@@ -8,8 +8,10 @@ enabled = true
 
 [build]
 cwd = "{root}"
+# Prefer the sibling checkout when available; the preparation script clones the
+# pinned version into the build cache when ../siecs is absent.
 commands = [
-  ["bake", "build", "{root}/../siecs", "-r", "--cfg", "release"],
+  ["bash", "tools/prepare_siecs_source.sh", "{root}/../siecs"],
   ["cmake", "-S", "adapters/siecs", "-B", "build/siecs", "-G", "Ninja", "-DCMAKE_BUILD_TYPE=Release", "-DSIECS_ROOT={root}/../siecs"],
   ["cmake", "--build", "build/siecs", "--config", "Release"],
 ]
