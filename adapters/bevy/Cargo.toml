@@ -2,10 +2,11 @@
 name = "bevy-bench"
 version = "0.1.0"
 edition = "2024"
+rust-version = "1.95"
 publish = false
 
 [dependencies]
-bevy_ecs = "=0.19.0"
+bevy_ecs = "=0.20.0"
 
 [profile.release]
 codegen-units = 1

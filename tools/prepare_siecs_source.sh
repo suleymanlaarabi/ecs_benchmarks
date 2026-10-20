@@ -8,11 +8,13 @@ fi
 
 repo_root=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd)
 requested_root=$1
-siecs_commit=3295244
+siecs_commit=3ec502180e03c8ef7b8269541f553402ee617999
 siecs_url=https://github.com/suleymanlaarabi/siecs.git
 cache_root="$repo_root/build/siecs/_deps/siecs-src"
 
-if [[ -f "$requested_root/distr/siecs_no_addons.c" && -f "$requested_root/distr/siecs_no_addons.h" ]]; then
+if [[ -f "$requested_root/distr/siecs.c" && -f "$requested_root/distr/siecs.h" ]] &&
+  [[ "$(git -C "$requested_root" rev-parse HEAD 2>/dev/null)" == "$siecs_commit" ]] &&
+  [[ -z "$(git -C "$requested_root" status --porcelain)" ]]; then
   exit 0
 fi
 

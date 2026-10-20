@@ -255,7 +255,7 @@ int main(int argc, char **argv) {
         const uint64_t duration = run_sample(&args, &checksum);
         printf(
             "{\"protocol\":\"ecs-bench/v1\",\"system\":\"flecs\","
-            "\"system_version\":\"4.1.5\",\"language\":\"C\","
+            "\"system_version\":\"4.1.6\",\"language\":\"C\","
             "\"workload\":\"%s\",\"entities\":%" PRId32 ",\"iterations\":%" PRId32 ","
             "\"sample\":%" PRId32 ",\"duration_ns\":%" PRIu64 ","
             "\"ns_per_iteration\":%.6f,\"checksum\":%.6f}\n",

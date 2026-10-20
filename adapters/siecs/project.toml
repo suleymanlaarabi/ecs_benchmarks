@@ -2,14 +2,14 @@
 id = "siecs"
 name = "Siecs"
 language = "C"
-version = "3295244"
+version = "3ec5021"
 url = "https://github.com/suleymanlaarabi/siecs"
 enabled = true
 
 [build]
 cwd = "{root}"
-# Prefer the sibling checkout when available; the preparation script clones the
-# pinned version into the build cache when ../siecs is absent.
+# Use the sibling checkout only when clean and at the pinned commit; otherwise
+# the preparation script clones the pinned version into the build cache.
 commands = [
   ["bash", "tools/prepare_siecs_source.sh", "{root}/../siecs"],
   ["cmake", "-S", "adapters/siecs", "-B", "build/siecs", "-G", "Ninja", "-DCMAKE_BUILD_TYPE=Release", "-DSIECS_ROOT={root}/../siecs"],

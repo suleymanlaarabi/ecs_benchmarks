@@ -1,7 +1,7 @@
 #include <siecs.h>
 
-#if SIECS_HAS_NAMES || SIECS_HAS_META || SIECS_HAS_REST
-#error "Siecs benchmark must be built without optional features"
+#ifndef NDEBUG
+#error "Siecs benchmark must be built in release mode"
 #endif
 
 #include <inttypes.h>
@@ -117,7 +117,7 @@ static void iterate_once(ecs_query_id_t query) {
 }
 
 static double checksum_positions(void) {
-    const ecs_query_id_t query = ecs_query({ .terms = { ecs_in(Position) } });
+    const ecs_query_id_t query = ecs_query({ .components = { ecs_in(Position) } });
     double checksum = 0.0;
     ecs_iter_t it = ecs_query_iter(query);
     while (ecs_iter_next(&it)) {
@@ -176,7 +176,7 @@ static uint64_t run_sample(const Args *args, double *checksum) {
             ecs_set(entity, Velocity, { 0.5, -0.25 });
         }
         const ecs_query_id_t query =
-            ecs_query({ .terms = { ecs_inout(Position), ecs_in(Velocity) } });
+            ecs_query({ .components = { ecs_inout(Position), ecs_in(Velocity) } });
         for (uint32_t i = 0; i < args->warmup; ++i) {
             iterate_once(query);
         }
@@ -202,7 +202,7 @@ int main(int argc, char **argv) {
         const uint64_t duration = run_sample(&args, &checksum);
         printf(
             "{\"protocol\":\"ecs-bench/v1\",\"system\":\"siecs\","
-            "\"system_version\":\"3295244\",\"language\":\"C\","
+            "\"system_version\":\"3ec5021\",\"language\":\"C\","
             "\"workload\":\"%s\",\"entities\":%" PRIu32 ",\"iterations\":%" PRIu32 ","
             "\"sample\":%" PRIu32 ",\"duration_ns\":%" PRIu64 ","
             "\"ns_per_iteration\":%.6f,\"checksum\":%.6f}\n",

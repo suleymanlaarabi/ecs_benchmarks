@@ -5,7 +5,7 @@ use std::process;
 use std::time::Instant;
 
 const SYSTEM: &str = "bevy";
-const VERSION: &str = "0.19.0";
+const VERSION: &str = "0.20.0";
 
 #[derive(Component, Clone, Copy)]
 struct Position {

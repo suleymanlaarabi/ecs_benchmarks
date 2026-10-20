@@ -2,7 +2,7 @@
 id = "gaia"
 name = "Gaia-ECS"
 language = "C++"
-version = "09eaa807"
+version = "1.0.0"
 url = "https://github.com/richardbiely/gaia-ecs"
 enabled = true
 

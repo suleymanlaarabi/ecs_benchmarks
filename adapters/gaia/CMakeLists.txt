@@ -5,7 +5,7 @@ include(FetchContent)
 FetchContent_Declare(
   gaia
   GIT_REPOSITORY https://github.com/richardbiely/gaia-ecs.git
-  GIT_TAG 09eaa8070501f66325d472bd42119f58e71ecd92
+  GIT_TAG v1.0.0
   GIT_SHALLOW FALSE
   # Populate the pinned source without evaluating Gaia's top-level project.
   SOURCE_SUBDIR _ecs_bench_no_cmake_project

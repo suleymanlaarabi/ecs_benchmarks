@@ -189,7 +189,7 @@ int main(int argc, char **argv) {
     double checksum = 0.0;
     const uint64_t duration = run_sample(args, checksum);
     std::printf("{\"protocol\":\"ecs-bench/v1\",\"system\":\"gaia\","
-                "\"system_version\":\"09eaa807\",\"language\":\"C++\","
+                "\"system_version\":\"1.0.0\",\"language\":\"C++\","
                 "\"workload\":\"%s\",\"entities\":%u,\"iterations\":%u,"
                 "\"sample\":%u,\"duration_ns\":%llu,"
                 "\"ns_per_iteration\":%.6f,\"checksum\":%.6f}\n",

@@ -2,30 +2,42 @@ cmake_minimum_required(VERSION 3.20)
 project(siecs_bench LANGUAGES C)
 
 set(SIECS_ROOT "" CACHE PATH "Path to the local Siecs repository")
-if(NOT IS_DIRECTORY "${SIECS_ROOT}/include")
+set(SIECS_COMMIT "3ec502180e03c8ef7b8269541f553402ee617999")
+find_package(Git REQUIRED)
+execute_process(
+  COMMAND "${GIT_EXECUTABLE}" -C "${SIECS_ROOT}" rev-parse HEAD
+  OUTPUT_VARIABLE SIECS_LOCAL_COMMIT
+  OUTPUT_STRIP_TRAILING_WHITESPACE
+  ERROR_QUIET
+)
+execute_process(
+  COMMAND "${GIT_EXECUTABLE}" -C "${SIECS_ROOT}" status --porcelain
+  OUTPUT_VARIABLE SIECS_LOCAL_CHANGES
+  OUTPUT_STRIP_TRAILING_WHITESPACE
+  ERROR_QUIET
+)
+if(NOT SIECS_LOCAL_COMMIT STREQUAL SIECS_COMMIT OR NOT SIECS_LOCAL_CHANGES STREQUAL "")
   set(SIECS_ROOT "${CMAKE_CURRENT_LIST_DIR}/../../build/siecs/_deps/siecs-src")
 endif()
 if(NOT IS_DIRECTORY "${SIECS_ROOT}/include")
   message(FATAL_ERROR "SIECS_ROOT must point to a Siecs checkout")
 endif()
 
-set(SIECS_SOURCE "${SIECS_ROOT}/distr/siecs_no_addons.c")
+set(SIECS_SOURCE "${SIECS_ROOT}/distr/siecs.c")
 set(SIECS_INCLUDE "${SIECS_ROOT}/distr")
-if(NOT EXISTS "${SIECS_SOURCE}" OR NOT EXISTS "${SIECS_ROOT}/distr/siecs_no_addons.h")
-  message(FATAL_ERROR "Siecs no-addons amalgamation is missing from ${SIECS_ROOT}/distr")
+if(NOT EXISTS "${SIECS_SOURCE}" OR NOT EXISTS "${SIECS_ROOT}/distr/siecs.h")
+  message(FATAL_ERROR "Siecs amalgamation is missing from ${SIECS_ROOT}/distr")
 endif()
 
 add_library(siecs_core STATIC "${SIECS_SOURCE}")
 target_compile_features(siecs_core PUBLIC c_std_23)
-target_compile_definitions(siecs_core PUBLIC SIECS_CUSTOM_BUILD)
 target_include_directories(siecs_core PUBLIC "${SIECS_INCLUDE}")
 if(NOT WIN32)
-  target_link_libraries(siecs_core PUBLIC pthread)
+  target_link_libraries(siecs_core PUBLIC pthread ${CMAKE_DL_LIBS})
 endif()
 
 add_executable(siecs-bench main.c)
 target_compile_features(siecs-bench PRIVATE c_std_23)
-target_compile_definitions(siecs-bench PRIVATE SIECS_CUSTOM_BUILD)
 target_link_libraries(siecs-bench PRIVATE siecs_core)
 
 if(MSVC)

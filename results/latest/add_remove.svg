@@ -13,20 +13,20 @@
 <text class="axis" text-anchor="end" x="79" y="156.00">10</text>
 <line class="grid" x1="88" y1="64.00" x2="896" y2="64.00"/>
 <text class="axis" text-anchor="end" x="79" y="68.00">100</text>
-<rect class="bar" x="131.67" y="346.98" width="44.00" height="69.02" fill="#e76f51"><title>bevy: 0.06086 ms</title></rect>
-<rect class="bar" x="177.67" y="325.16" width="44.00" height="90.84" fill="#2a9d8f"><title>flecs: 0.1077 ms</title></rect>
-<rect class="bar" x="223.67" y="316.74" width="44.00" height="99.26" fill="#457b9d"><title>gaia: 0.1343 ms</title></rect>
-<rect class="bar" x="269.67" y="361.66" width="44.00" height="54.34" fill="#f4a261"><title>siecs: 0.04145 ms</title></rect>
+<rect class="bar" x="131.67" y="347.63" width="44.00" height="68.37" fill="#e76f51"><title>bevy: 0.05983 ms</title></rect>
+<rect class="bar" x="177.67" y="310.45" width="44.00" height="105.55" fill="#2a9d8f"><title>flecs: 0.1583 ms</title></rect>
+<rect class="bar" x="223.67" y="298.72" width="44.00" height="117.28" fill="#457b9d"><title>gaia: 0.2151 ms</title></rect>
+<rect class="bar" x="269.67" y="333.18" width="44.00" height="82.82" fill="#f4a261"><title>siecs: 0.08732 ms</title></rect>
 <text class="axis" text-anchor="middle" x="222.67" y="439">1,000</text>
-<rect class="bar" x="401.00" y="255.10" width="44.00" height="160.90" fill="#e76f51"><title>bevy: 0.6736 ms</title></rect>
-<rect class="bar" x="447.00" y="245.73" width="44.00" height="170.27" fill="#2a9d8f"><title>flecs: 0.8607 ms</title></rect>
-<rect class="bar" x="493.00" y="227.44" width="44.00" height="188.56" fill="#457b9d"><title>gaia: 1.389 ms</title></rect>
-<rect class="bar" x="539.00" y="287.56" width="44.00" height="128.44" fill="#f4a261"><title>siecs: 0.2881 ms</title></rect>
+<rect class="bar" x="401.00" y="250.56" width="44.00" height="165.44" fill="#e76f51"><title>bevy: 0.7586 ms</title></rect>
+<rect class="bar" x="447.00" y="243.83" width="44.00" height="172.17" fill="#2a9d8f"><title>flecs: 0.9047 ms</title></rect>
+<rect class="bar" x="493.00" y="223.01" width="44.00" height="192.99" fill="#457b9d"><title>gaia: 1.56 ms</title></rect>
+<rect class="bar" x="539.00" y="267.57" width="44.00" height="148.43" fill="#f4a261"><title>siecs: 0.4861 ms</title></rect>
 <text class="axis" text-anchor="middle" x="492.00" y="439">10,000</text>
-<rect class="bar" x="670.33" y="166.77" width="44.00" height="249.23" fill="#e76f51"><title>bevy: 6.794 ms</title></rect>
-<rect class="bar" x="716.33" y="156.17" width="44.00" height="259.83" fill="#2a9d8f"><title>flecs: 8.967 ms</title></rect>
-<rect class="bar" x="762.33" y="134.03" width="44.00" height="281.97" fill="#457b9d"><title>gaia: 16 ms</title></rect>
-<rect class="bar" x="808.33" y="197.11" width="44.00" height="218.89" fill="#f4a261"><title>siecs: 3.071 ms</title></rect>
+<rect class="bar" x="670.33" y="168.41" width="44.00" height="247.59" fill="#e76f51"><title>bevy: 6.509 ms</title></rect>
+<rect class="bar" x="716.33" y="155.53" width="44.00" height="260.47" fill="#2a9d8f"><title>flecs: 9.117 ms</title></rect>
+<rect class="bar" x="762.33" y="129.02" width="44.00" height="286.98" fill="#457b9d"><title>gaia: 18.24 ms</title></rect>
+<rect class="bar" x="808.33" y="188.00" width="44.00" height="228.00" fill="#f4a261"><title>siecs: 3.899 ms</title></rect>
 <text class="axis" text-anchor="middle" x="761.33" y="439">100,000</text>
 <text class="axis" text-anchor="middle" x="492.0" y="483">entities</text>
 <rect x="88" y="452" width="13" height="13" rx="2" fill="#e76f51"/>
