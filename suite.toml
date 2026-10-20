@@ -8,6 +8,12 @@ entities = [1_000, 10_000, 100_000]
 quick_samples = 3
 quick_warmup = 1
 quick_entities = [1_000, 10_000]
+# Samples are split into interleaved rounds so every system sees the same
+# machine state. Adapters are pinned to one logical CPU (a performance core on
+# hybrid CPUs); override with --cpu or disable with --no-pin.
+rounds = 5
+quick_rounds = 1
+cpu = 4
 
 [[workloads]]
 id = "entity_cycle"

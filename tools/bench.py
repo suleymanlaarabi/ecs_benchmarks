@@ -50,6 +50,10 @@ def discover_projects(include_disabled: bool = False) -> list[dict[str, Any]]:
             continue
         manifest["_path"] = manifest_path
         manifest["_dir"] = manifest_path.parent
+        dev = manifest.get("dev")
+        manifest["_dev"] = bool(dev and os.environ.get(dev["env"]))
+        if manifest["_dev"]:
+            project["version"] = dev["version"]
         projects.append(manifest)
     return projects
 
@@ -87,9 +91,15 @@ def run_command(
     cwd: pathlib.Path,
     capture: bool = False,
     quiet: bool = False,
+    env: dict[str, str] | None = None,
+    cpu: int | None = None,
 ) -> subprocess.CompletedProcess[str]:
     if not quiet:
         print(f"  $ {' '.join(command)}", flush=True)
+    preexec = None
+    if cpu is not None:
+        def preexec() -> None:
+            os.sched_setaffinity(0, {cpu})
     try:
         return subprocess.run(
             command,
@@ -98,6 +108,8 @@ def run_command(
             text=True,
             stdout=subprocess.PIPE if capture else None,
             stderr=subprocess.PIPE if capture else None,
+            env=None if env is None else {**os.environ, **env},
+            preexec_fn=preexec,
         )
     except FileNotFoundError as exc:
         raise BenchError(f"command not found: {command[0]}") from exc
@@ -115,8 +127,18 @@ def build_project(manifest: dict[str, Any]) -> None:
     print(f"\nBuilding {project['name']} ({project['language']})", flush=True)
     build = manifest["build"]
     cwd = command_cwd(build.get("cwd"), manifest)
-    for raw_command in build["commands"]:
-        run_command(expand(raw_command, manifest), cwd=cwd)
+    commands = list(build["commands"])
+    env = None
+    if manifest["_dev"]:
+        dev = manifest["dev"]
+        print(f"  (dev mode: {dev['env']} is set)", flush=True)
+        commands = list(dev.get("commands", [])) + commands
+        env = {
+            key: expand([value], manifest)[0]
+            for key, value in dev.get("environment", {}).items()
+        }
+    for raw_command in commands:
+        run_command(expand(raw_command, manifest), cwd=cwd, env=env)
     binary = ROOT / manifest["run"]["binary"]
     if not binary.is_file():
         raise BenchError(f"{project['id']}: binary was not produced at {binary}")
@@ -145,6 +167,8 @@ def suite_config(quick: bool) -> tuple[dict[str, Any], list[dict[str, Any]]]:
         "samples": suite["quick_samples"] if quick else suite["samples"],
         "warmup": suite["quick_warmup"] if quick else suite["warmup"],
         "entities": suite["quick_entities"] if quick else suite["entities"],
+        "rounds": suite.get("quick_rounds" if quick else "rounds", 1),
+        "cpu": suite.get("cpu"),
     }
     workloads = []
     for item in config["workloads"]:
@@ -221,6 +245,7 @@ def invoke_case(
     iterations: int,
     samples: int,
     warmup: int,
+    cpu: int | None = None,
 ) -> list[dict[str, Any]]:
     run = manifest["run"]
     command = expand(run.get("command", ["{binary}"]), manifest)
@@ -241,6 +266,7 @@ def invoke_case(
         cwd=command_cwd(run.get("cwd"), manifest),
         capture=True,
         quiet=True,
+        cpu=cpu,
     )
     records = []
     for line_number, line in enumerate(result.stdout.splitlines(), 1):
@@ -331,6 +357,7 @@ def summarize(records: list[dict[str, Any]]) -> list[dict[str, Any]]:
                 "min_ns": round(min(values), 3),
                 "max_ns": round(max(values), 3),
                 "p95_ns": round(percentile(values, 0.95), 3),
+                "mad_ns": round(statistics.median(abs(v - median) for v in values), 3),
             }
         )
     return summary
@@ -530,6 +557,45 @@ def publish(
     )
 
 
+def check_machine(cpu: int | None) -> None:
+    """Warn about machine settings that make timings unreliable."""
+    if cpu is None:
+        print("warning: CPU pinning disabled; expect noisy timings", file=sys.stderr)
+    elif hasattr(os, "sched_getaffinity") and cpu not in os.sched_getaffinity(0):
+        raise BenchError(f"cpu {cpu} is not available to this process")
+    governor = pathlib.Path(
+        f"/sys/devices/system/cpu/cpu{cpu or 0}/cpufreq/scaling_governor"
+    )
+    if governor.is_file():
+        value = governor.read_text().strip()
+        if value != "performance":
+            print(
+                f"warning: cpu{cpu or 0} governor is '{value}', not 'performance'; "
+                "frequency scaling adds noise",
+                file=sys.stderr,
+            )
+
+
+def print_case(records: list[dict[str, Any]], workload: str, entities: int) -> None:
+    rows = [
+        row
+        for row in summarize(
+            [r for r in records if r["workload"] == workload and r["entities"] == entities]
+        )
+    ]
+    if not rows:
+        return
+    best = min(float(row["median_ns"]) for row in rows)
+    for row in sorted(rows, key=lambda r: float(r["median_ns"])):
+        median = float(row["median_ns"])
+        spread = 100.0 * float(row["mad_ns"]) / median if median else 0.0
+        print(
+            f"    {row['system']:<12} median {median:>14,.1f} ns  "
+            f"min {float(row['min_ns']):>14,.1f} ns  ±{spread:4.1f}%  "
+            f"x{median / best:.2f}"
+        )
+
+
 def execute_run(args: argparse.Namespace) -> None:
     projects = select_projects(args.system)
     if not projects:
@@ -547,6 +613,13 @@ def execute_run(args: argparse.Namespace) -> None:
         settings["samples"] = args.samples
     if args.warmup is not None:
         settings["warmup"] = args.warmup
+    if args.rounds is not None:
+        settings["rounds"] = args.rounds
+    if args.cpu is not None:
+        settings["cpu"] = args.cpu
+    if args.no_pin:
+        settings["cpu"] = None
+    settings["rounds"] = max(1, min(int(settings["rounds"]), settings["samples"]))
     for key in ("samples", "warmup"):
         if settings[key] < (0 if key == "warmup" else 1):
             raise BenchError(f"{key} must be positive")
@@ -557,6 +630,8 @@ def execute_run(args: argparse.Namespace) -> None:
         projects = build_projects(projects, args.keep_going)
     if not projects:
         raise BenchError("no adapter could be built")
+    check_machine(settings["cpu"])
+    publish_results = not args.no_publish and not any(p["_dev"] for p in projects)
 
     timestamp = dt.datetime.now(dt.timezone.utc).strftime("%Y%m%dT%H%M%SZ")
     run_dir = ROOT / "results" / "runs" / timestamp
@@ -573,6 +648,8 @@ def execute_run(args: argparse.Namespace) -> None:
             "samples": settings["samples"],
             "warmup": settings["warmup"],
             "entities": settings["entities"],
+            "rounds": settings["rounds"],
+            "pinned_cpu": settings["cpu"],
             "systems": [p["project"] for p in projects],
         }
     )
@@ -581,38 +658,61 @@ def execute_run(args: argparse.Namespace) -> None:
     )
 
     records: list[dict[str, Any]] = []
-    total = len(projects) * len(workloads) * len(settings["entities"])
+    total = len(workloads) * len(settings["entities"])
     current = 0
     for workload in workloads:
         iterations = int(workload["active_iterations"])
         for entities in settings["entities"]:
+            current += 1
+            runnable = []
             for manifest in projects:
-                current += 1
-                system = manifest["project"]["id"]
-                supported = manifest["run"]["workloads"]
-                if workload["id"] not in supported:
-                    print(f"[{current}/{total}] {system}/{workload['id']}/{entities}: unsupported")
-                    continue
-                print(
-                    f"[{current}/{total}] {system}/{workload['id']}/{entities} "
-                    f"({settings['samples']} samples)",
-                    flush=True,
+                if workload["id"] in manifest["run"]["workloads"]:
+                    runnable.append(manifest)
+                else:
+                    print(f"  {manifest['project']['id']}/{workload['id']}: unsupported")
+            print(
+                f"[{current}/{total}] {workload['id']}/{entities}: "
+                f"{len(runnable)} system(s), {settings['samples']} samples "
+                f"in {settings['rounds']} interleaved round(s)",
+                flush=True,
+            )
+            # Systems alternate round by round, in a rotating order, so slow
+            # drifts of the machine (clock, thermals, background load) are
+            # spread over every system instead of penalizing whichever ran last.
+            offsets = {m["project"]["id"]: 0 for m in runnable}
+            failed: set[str] = set()
+            for round_index in range(settings["rounds"]):
+                count = settings["samples"] // settings["rounds"] + (
+                    1 if round_index < settings["samples"] % settings["rounds"] else 0
                 )
-                try:
-                    records.extend(
-                        invoke_case(
+                if count == 0:
+                    continue
+                shift = round_index % max(1, len(runnable))
+                for manifest in runnable[shift:] + runnable[:shift]:
+                    system = manifest["project"]["id"]
+                    if system in failed:
+                        continue
+                    try:
+                        batch = invoke_case(
                             manifest,
                             workload,
                             entities,
                             iterations,
-                            settings["samples"],
+                            count,
                             settings["warmup"],
+                            settings["cpu"],
                         )
-                    )
-                except BenchError as exc:
-                    if not args.keep_going:
-                        raise
-                    print(f"warning: {exc}", file=sys.stderr)
+                    except BenchError as exc:
+                        if not args.keep_going:
+                            raise
+                        failed.add(system)
+                        print(f"warning: {exc}", file=sys.stderr)
+                        continue
+                    for record in batch:
+                        record["sample"] += offsets[system]
+                    offsets[system] += count
+                    records.extend(batch)
+            print_case(records, workload["id"], entities)
     if not records:
         raise BenchError("the run produced no records")
     raw_path = run_dir / "raw.jsonl"
@@ -622,9 +722,12 @@ def execute_run(args: argparse.Namespace) -> None:
     )
     summary = summarize(records)
     write_csv(run_dir / "summary.csv", summary)
-    publish(run_dir, records, summary, metadata, workloads)
-    print(f"\nPublished {len(records)} samples to {run_dir.relative_to(ROOT)}")
-    print("Updated results/latest and README.md")
+    if publish_results:
+        publish(run_dir, records, summary, metadata, workloads)
+        print(f"\nPublished {len(records)} samples to {run_dir.relative_to(ROOT)}")
+        print("Updated results/latest and README.md")
+    else:
+        print(f"\nWrote {len(records)} samples to {run_dir.relative_to(ROOT)} (not published)")
 
 
 def validate_repository() -> None:
@@ -726,6 +829,12 @@ def create_parser() -> argparse.ArgumentParser:
     run_parser.add_argument("--samples", type=int, help="override sample count")
     run_parser.add_argument("--warmup", type=int, help="override warmup iterations")
     run_parser.add_argument("--no-build", action="store_true", help="reuse existing binaries")
+    run_parser.add_argument("--rounds", type=int, help="interleave samples in this many rounds")
+    run_parser.add_argument("--cpu", type=int, help="pin adapters to this logical CPU")
+    run_parser.add_argument("--no-pin", action="store_true", help="do not pin adapters")
+    run_parser.add_argument(
+        "--no-publish", action="store_true", help="keep results/latest and README untouched"
+    )
     run_parser.add_argument(
         "--keep-going", action="store_true", help="continue after adapter failures"
     )

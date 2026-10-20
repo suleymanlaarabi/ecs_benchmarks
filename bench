@@ -4,6 +4,10 @@ set -euo pipefail
 repo_dir="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
 
 case "${1:-}" in
+  ab)
+    shift
+    exec python3 "$repo_dir/tools/ab.py" "$@"
+    ;;
   build|list|render|run|scaffold|validate)
     exec python3 "$repo_dir/tools/bench.py" "$@"
     ;;

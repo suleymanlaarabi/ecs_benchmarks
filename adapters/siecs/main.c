@@ -10,6 +10,10 @@
 #include <string.h>
 #include <time.h>
 
+#ifndef SIECS_BENCH_VERSION
+#define SIECS_BENCH_VERSION "3ec5021"
+#endif
+
 ECS_COMPONENT(Position, {
     double x;
     double y;
@@ -202,7 +206,7 @@ int main(int argc, char **argv) {
         const uint64_t duration = run_sample(&args, &checksum);
         printf(
             "{\"protocol\":\"ecs-bench/v1\",\"system\":\"siecs\","
-            "\"system_version\":\"3ec5021\",\"language\":\"C\","
+            "\"system_version\":\"" SIECS_BENCH_VERSION "\",\"language\":\"C\","
             "\"workload\":\"%s\",\"entities\":%" PRIu32 ",\"iterations\":%" PRIu32 ","
             "\"sample\":%" PRIu32 ",\"duration_ns\":%" PRIu64 ","
             "\"ns_per_iteration\":%.6f,\"checksum\":%.6f}\n",

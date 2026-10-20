@@ -43,6 +43,34 @@ make test
 Historical runs go to `results/runs/<timestamp>/` and are ignored by Git.
 The publishable snapshot lives in `results/latest/`.
 
+### Reliable timings
+
+Each adapter runs pinned to one logical CPU (`cpu` in `suite.toml`, a
+performance core on hybrid CPUs; `--cpu N` overrides it, `--no-pin` disables
+it), and samples are split into rounds that alternate between systems in a
+rotating order, so clock ramps and background load hit every system alike.
+The runner warns when the CPU governor is not `performance`; for stable
+numbers switch it before measuring (`sudo cpupower frequency-set -g
+performance`). Each case prints its median, minimum, spread (MAD) and ratio
+to the fastest system.
+
+### Working on Siecs
+
+`SIECS_DEV=1 ./bench ...` benchmarks the `../siecs` working tree as it is:
+its amalgamation is regenerated into `build/siecs-dev` in a throwaway
+`BAKE_HOME` (`tools/siecs_distr.sh`), nothing in `../siecs` is modified, and
+results are not published. To measure a change, compare two revisions with
+the same flags, CPU and alternating rounds:
+
+```console
+./bench ab                                   # HEAD of ../siecs vs its working tree
+./bench ab --base main --head my-branch --workload add_remove --samples 30
+./bench ab --adapter siecs --adapter siecs-cpp --workload iterate
+```
+
+It reports the median ratio B/A with a bootstrap 95% interval and calls a
+case faster or slower only when the interval excludes 1.
+
 ## What is measured
 
 The suite currently defines three single-threaded operations:
@@ -128,6 +156,10 @@ Adapter-specific build choices matter when interpreting the results:
   Reflection metadata is now part of the core; the former no-addons
   distribution is no longer available. A clean `../siecs` checkout at the
   pinned commit is preferred, with a pinned clone used as fallback.
+- Siecs (C++ API), `siecs-cpp`, runs the same Siecs build through its typed
+  C++20 API (`ecs::spawn().set(...)`, a built query and an `each` lambda). It
+  keeps one world for all samples because typed C++ component ids are not
+  registered again after `ecs::fini()`; each sample destroys its entities.
 
 ## Repository layout
 
@@ -135,6 +167,8 @@ Adapter-specific build choices matter when interpreting the results:
 adapters/<id>/project.toml  build/run manifest plus native benchmark code
 suite.toml                  workloads, entity counts, samples, warmup
 tools/bench.py              discovery, execution, validation, reports
+tools/ab.py                 A/B comparison of two Siecs revisions
+tools/siecs_distr.sh        isolated Siecs amalgamation for dev and A/B builds
 results/runs/               local timestamped history (ignored)
 results/latest/             publishable CSV, NDJSON, metadata, SVG
 docs/                       protocol and contributor guide

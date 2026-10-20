@@ -20,3 +20,14 @@ commands = [
 binary = "build/siecs/siecs-bench"
 command = ["{binary}"]
 workloads = ["entity_cycle", "add_remove", "iterate"]
+
+# SIECS_DEV=1 ./bench ... benchmarks the sibling ../siecs working tree as is.
+# Its amalgamation is regenerated into build/siecs-dev, nothing in ../siecs is
+# touched, and results are not published.
+[dev]
+env = "SIECS_DEV"
+version = "dev"
+commands = [
+  ["bash", "{root}/tools/siecs_distr.sh", "{root}/../siecs", "{root}/build/siecs-dev"],
+]
+environment = { SIECS_DISTR_ROOT = "{root}/build/siecs-dev", SIECS_BENCH_VERSION = "dev" }

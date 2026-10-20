@@ -1,0 +1,30 @@
+[project]
+id = "siecs-cpp"
+name = "Siecs (C++ API)"
+language = "C++"
+version = "3ec5021"
+url = "https://github.com/suleymanlaarabi/siecs"
+enabled = true
+
+[build]
+cwd = "{root}"
+# Same Siecs runtime as the C adapter, driven through the typed C++20 API
+# (ecs::spawn().set(...), query handles and each() lambdas).
+commands = [
+  ["bash", "tools/prepare_siecs_source.sh", "{root}/../siecs"],
+  ["cmake", "-S", "adapters/siecs-cpp", "-B", "build/siecs-cpp", "-G", "Ninja", "-DCMAKE_BUILD_TYPE=Release", "-DSIECS_ROOT={root}/../siecs"],
+  ["cmake", "--build", "build/siecs-cpp", "--config", "Release"],
+]
+
+[run]
+binary = "build/siecs-cpp/siecs-cpp-bench"
+command = ["{binary}"]
+workloads = ["entity_cycle", "add_remove", "iterate"]
+
+[dev]
+env = "SIECS_DEV"
+version = "dev"
+commands = [
+  ["bash", "{root}/tools/siecs_distr.sh", "{root}/../siecs", "{root}/build/siecs-dev"],
+]
+environment = { SIECS_DISTR_ROOT = "{root}/build/siecs-dev", SIECS_BENCH_VERSION = "dev" }
