@@ -2,7 +2,7 @@
 id = "siecs-cpp"
 name = "Siecs (C++ API)"
 language = "C++"
-version = "3ec5021"
+version = "6aa755f"
 url = "https://github.com/suleymanlaarabi/siecs"
 enabled = true
 

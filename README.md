@@ -92,7 +92,7 @@ results.
 
 ## Latest results
 
-Generated `2026-10-20T18:20:50.605656+00:00` on **Intel(R) Core(TM) Ultra 9 185H** (22 logical CPUs, `Linux-7.2.9-2-cachyos-bore-lto-x86_64-with-glibc2.44`).
+Generated `2026-10-20T20:04:50.586130+00:00` on **Intel(R) Core(TM) Ultra 9 185H** (22 logical CPUs, `Linux-7.2.9-2-cachyos-bore-lto-x86_64-with-glibc2.44`).
 
 Profile: **full suite** with 10 samples and 2 warmup iteration(s).
 
@@ -100,17 +100,17 @@ Profile: **full suite** with 10 samples and 2 warmup iteration(s).
 
 Values are median milliseconds per operation; lower is better. Setup is excluded from the timed region.
 
-| Workload | Entities | bevy 0.20.0 | flecs 4.1.6 | gaia 1.0.0 | siecs 3ec5021 |
-|---|---:|---:|---:|---:|---:|
-| Create + destroy | 1,000 | 0.111 | 0.229 | 0.429 | 0.081 |
-| Create + destroy | 10,000 | 0.806 | 2.273 | 4.441 | 0.681 |
-| Create + destroy | 100,000 | 7.748 | 12.843 | 46.239 | 4.480 |
-| Add + remove component | 1,000 | 0.060 | 0.158 | 0.215 | 0.087 |
-| Add + remove component | 10,000 | 0.759 | 0.905 | 1.560 | 0.486 |
-| Add + remove component | 100,000 | 6.509 | 9.117 | 18.243 | 3.899 |
-| Cached query iteration | 1,000 | 0.001 | 0.001 | 0.000 | 0.001 |
-| Cached query iteration | 10,000 | 0.023 | 0.003 | 0.009 | 0.005 |
-| Cached query iteration | 100,000 | 0.235 | 0.118 | 0.071 | 0.109 |
+| Workload | Entities | bevy 0.20.0 | flecs 4.1.6 | gaia 1.0.0 | siecs 6aa755f | siecs-cpp 6aa755f |
+|---|---:|---:|---:|---:|---:|---:|
+| Create + destroy | 1,000 | 0.047 | 0.120 | 0.230 | 0.017 | 0.017 |
+| Create + destroy | 10,000 | 0.447 | 1.305 | 2.457 | 0.169 | 0.177 |
+| Create + destroy | 100,000 | 4.393 | 12.701 | 24.766 | 1.764 | 1.829 |
+| Add + remove component | 1,000 | 0.064 | 0.085 | 0.143 | 0.024 | 0.024 |
+| Add + remove component | 10,000 | 0.650 | 0.884 | 1.511 | 0.225 | 0.245 |
+| Add + remove component | 100,000 | 6.446 | 8.743 | 15.705 | 2.304 | 2.484 |
+| Cached query iteration | 1,000 | 0.001 | 0.000 | 0.000 | 0.000 | 0.000 |
+| Cached query iteration | 10,000 | 0.010 | 0.003 | 0.005 | 0.003 | 0.003 |
+| Cached query iteration | 100,000 | 0.140 | 0.063 | 0.054 | 0.055 | 0.060 |
 
 ![Create + destroy](results/latest/entity_cycle.svg)
 
