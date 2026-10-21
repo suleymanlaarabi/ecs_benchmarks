@@ -8,7 +8,7 @@ fi
 
 repo_root=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd)
 requested_root=$1
-siecs_commit=6aa755fed67c20a30ff3809643bd44de70fdb9f4
+siecs_commit=4124e2dcc02758e9dd94d57e71bf3f19240eda18
 siecs_url=https://github.com/suleymanlaarabi/siecs.git
 cache_root="$repo_root/build/siecs/_deps/siecs-src"
 

@@ -2,7 +2,7 @@
 id = "siecs"
 name = "Siecs"
 language = "C"
-version = "6aa755f"
+version = "4124e2d"
 url = "https://github.com/suleymanlaarabi/siecs"
 enabled = true
 

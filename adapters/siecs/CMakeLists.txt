@@ -2,12 +2,12 @@ cmake_minimum_required(VERSION 3.20)
 project(siecs_bench LANGUAGES C)
 
 set(SIECS_ROOT "" CACHE PATH "Path to the local Siecs repository")
-set(SIECS_COMMIT "6aa755fed67c20a30ff3809643bd44de70fdb9f4")
+set(SIECS_COMMIT "4124e2dcc02758e9dd94d57e71bf3f19240eda18")
 # SIECS_DISTR_ROOT (environment) names a tree holding a pre-generated
 # distr/siecs.{c,h}. It skips the pinned commit check for local development
 # and A/B builds; it is read on every configure so it never sticks in the cache.
 set(SIECS_DISTR_ROOT "$ENV{SIECS_DISTR_ROOT}")
-set(SIECS_BENCH_VERSION "6aa755f")
+set(SIECS_BENCH_VERSION "4124e2d")
 if(NOT "$ENV{SIECS_BENCH_VERSION}" STREQUAL "")
   set(SIECS_BENCH_VERSION "$ENV{SIECS_BENCH_VERSION}")
 endif()

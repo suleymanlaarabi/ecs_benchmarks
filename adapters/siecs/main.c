@@ -11,7 +11,7 @@
 #include <time.h>
 
 #ifndef SIECS_BENCH_VERSION
-#define SIECS_BENCH_VERSION "6aa755f"
+#define SIECS_BENCH_VERSION "4124e2d"
 #endif
 
 ECS_COMPONENT(Position, {
